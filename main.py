@@ -1,30 +1,17 @@
-from xml.dom import minidom
-import base64
-import struct
-mydoc=minidom.parse('samples/file1.mzXML')
-scans=mydoc.getElementsByTagName('scan')
+from mzxmlReader import mzxmlReader as mzx
+from scan import scan
 
+file_obj=mzx('samples/file1.mzXML')
+xml_scans=file_obj.getScans()
+scan_arr=[]
 
-
-def myDecode(encoded):
-	mynr=base64.standard_b64decode(encoded)
-	peaks_ints = []
-	for i in range(0, len(mynr), 8):
-		peak = struct.unpack('>f', mynr[i:i+4])
-		inte = struct.unpack('>f', mynr[i+4:i+8])
-		peaks_ints.append(tuple([peak[0], inte[0]]))
-	return peaks_ints
-
-
-
-for s in scans:
-	print(s.attributes['num'].value),
+for s in xml_scans:
+	scan_obj=scan(s)
 	peaks=s.getElementsByTagName('peaks')
 	peak=peaks[0]
-	encoded=peak.firstChild.nodeValue
-	decoded=myDecode(encoded)
-	for d in decoded:
-		print(d),
-	print()
+	encoded_string=peak.firstChild.nodeValue
+	inms_pair=file_obj.decode64(encoded_string)
+	scan_obj.setPeakPairs(inms_pair)
+	scan_arr.append(scan_obj)
 
-
+print(len(scan_arr))
