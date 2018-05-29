@@ -57,9 +57,18 @@ for l in range(1, len(looper)):
 			new_slice.insert(mz_in_rt[ind])
 			ind+=1
 		else:
+			new_slice.sortBin()
 			break
 	slice_array.append(new_slice)
-
+	break
+for sl in slice_array:
+	x=[]
+	y=[]
+	for t in sl.getBin():
+		x.append(t[2])
+		y.append(t[1])
+	plt.plot(x,y, 'r--')
+	plt.show()
 
 
 
