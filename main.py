@@ -1,5 +1,6 @@
 from mzxmlReader import mzxmlReader as mzx
 from scan import scan
+from mzslice import mzslice
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -48,22 +49,17 @@ looper=np.arange(minmz[0], maxmz[0], 0.1)
 slice_array=[]
 ind=0
 for l in range(1, len(looper)):
-	new_slice=[]
 	slice_mz_min=looper[l-1]
 	slice_mz_max=looper[l]
+	new_slice=mzslice(slice_mz_min, slice_mz_max)
 	while(True):
 		if(mz_in_rt[ind][0]>=slice_mz_min and mz_in_rt[ind][0]<slice_mz_max):
-			new_slice.append(mz_in_rt[ind])
+			new_slice.insert(mz_in_rt[ind])
 			ind+=1
 		else:
 			break
 	slice_array.append(new_slice)
-mysum=0
-print(ind)
-print(len(mz_in_rt))
-for i in slice_array:
-	mysum+=len(i)
-print(mysum)
+
 
 
 
