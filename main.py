@@ -3,6 +3,8 @@ from scan import scan
 from mzslice import mzslice
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.signal import savgol_filter
+from scipy.signal import find_peaks_cwt
 
 file_obj=mzx('samples/file1.mzXML')
 xml_scans=file_obj.getScans()
@@ -18,7 +20,7 @@ for s in xml_scans:
 	scan_obj.setPeakPairs(inms_pair)
 	scan_arr.append(scan_obj)
 
-print("Scans Loaded")
+# print("Scans Loaded")
 mz_in_rt=[]
 for s in scan_arr:
 	for p in s.peaks:
@@ -60,14 +62,27 @@ for l in range(1, len(looper)):
 			new_slice.sortBin()
 			break
 	slice_array.append(new_slice)
-	break
+
+
+slice_smooth=[]
 for sl in slice_array:
 	x=[]
 	y=[]
 	for t in sl.getBin():
 		x.append(t[2])
 		y.append(t[1])
-	plt.plot(x,y, 'r--')
+	smothing_win=len(x)/5
+	if(smothing_win%2==0):
+		smothing_win+=1
+	print(len(x))
+	print(len(y))
+	print(smothing_win)
+	poly_order=3
+	if(smothing_win<=poly_order):
+		poly_order=smothing_win-1
+	yhat=savgol_filter(y,smothing_win,poly_order)
+	# plt.plot(x,y, 'r--')
+	plt.plot(x,yhat,'r--', color='blue')
 	plt.show()
 
 

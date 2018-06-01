@@ -14,7 +14,7 @@ class scan():
 		self.basePeakIntensity=scan_data.attributes['basePeakIntensity'].value
 		self.totIonCurrent=scan_data.attributes['totIonCurrent'].value
 		self.peaks=None
-		print("Scan "+self.num+" loaded")
+		# print("Scan "+self.num+" loaded")
 	def setPeakPairs(self,peaks):
 		self.peaks=peaks
-		print("Peaks")
+		# print("Peaks")
