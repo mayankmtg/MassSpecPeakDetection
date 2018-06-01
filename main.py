@@ -55,14 +55,14 @@ for l in range(1, len(looper)):
 	slice_mz_max=looper[l]
 	new_slice=mzslice(slice_mz_min, slice_mz_max)
 	while(True):
-		if(mz_in_rt[ind][0]>=slice_mz_min and mz_in_rt[ind][0]<slice_mz_max):
+		if(mz_in_rt[ind][0]>=slice_mz_min-0.025 and mz_in_rt[ind][0]<slice_mz_max+0.025):
 			new_slice.insert(mz_in_rt[ind])
 			ind+=1
 		else:
 			new_slice.sortBin()
 			break
 	slice_array.append(new_slice)
-
+	break
 
 slice_smooth=[]
 for sl in slice_array:
@@ -71,19 +71,30 @@ for sl in slice_array:
 	for t in sl.getBin():
 		x.append(t[2])
 		y.append(t[1])
-	smothing_win=len(x)/5
-	if(smothing_win%2==0):
-		smothing_win+=1
+	smoothing_win=len(x)/5
+	if(smoothing_win%2==0):
+		smoothing_win+=1
 	print(len(x))
 	print(len(y))
-	print(smothing_win)
+	print(smoothing_win)
 	poly_order=3
-	if(smothing_win<=poly_order):
-		poly_order=smothing_win-1
-	yhat=savgol_filter(y,smothing_win,poly_order)
+	if(smoothing_win<=poly_order):
+		poly_order=smoothing_win-1
+	yhat=savgol_filter(y,smoothing_win,poly_order)
+	bin_in=0
+	for t in sl.getBin():
+		sl.smooth_in(yhat[bin_in], bin_in)
+		bin_in+=1
+
 	# plt.plot(x,y, 'r--')
-	plt.plot(x,yhat,'r--', color='blue')
+	# plt.plot(x,yhat,'r--', color='blue')
+	# plt.show()
+for sl in slice_array:
+	x=[]
+	y=[]
+	for t in sl.getBin():
+		x.append(t[2])
+		y.append(t[1])
+	plt.plot(x,y, 'r--')
 	plt.show()
-
-
 

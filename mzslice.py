@@ -14,3 +14,6 @@ class mzslice():
 	def sortBin(self):
 		# Time wise sort the bin
 		self.bin=sorted(self.bin, key=lambda x:x[2])
+	def smooth_in(self,intensity,bin_in):
+		self.bin[bin_in][1]=intensity
+		
