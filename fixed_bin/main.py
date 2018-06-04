@@ -6,7 +6,7 @@ import numpy as np
 from scipy.signal import savgol_filter
 from scipy.signal import find_peaks_cwt
 
-file_obj=mzx('samples/file1.mzXML')
+file_obj=mzx('../samples/file1.mzXML')
 xml_scans=file_obj.getScans()
 scan_arr=[]
 
@@ -89,6 +89,7 @@ for sl in slice_array:
 	# plt.plot(x,y, 'r--')
 	# plt.plot(x,yhat,'r--', color='blue')
 	# plt.show()
+
 for sl in slice_array:
 	x=[]
 	y=[]
