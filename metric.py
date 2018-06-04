@@ -37,29 +37,31 @@ for i in range(len(line_array)):
 		first_corr=pearsonr(v1,v2)[0]
 		if(first_corr>=corrthresh and abs(line_array[i][3]-line_array[j][3])<=mzdiff and abs(line_array[i][4]-line_array[j][4])<=rtdiff):
 			count+=1
-			tup_duplicates.append((i,j))
+			print(i,j)
+			# tup_duplicates.append((i,j))
 print("Number of duplicates: "),
 print(count)
 # print(len(tup_duplicates))
 print("Percentage duplicates: "),
 print(float(count)/float(len(line_array)))
-print("cvs-writing")
+
+# print("cvs-writing")
 
 
-table_labels.remove('label')
-table_labels.remove('isotopeLabel')
-table_labels.remove('compound')
-table_labels.remove('compoundId')
-table_labels.remove('formula')
-dell=","
+# table_labels.remove('label')
+# table_labels.remove('isotopeLabel')
+# table_labels.remove('compound')
+# table_labels.remove('compoundId')
+# table_labels.remove('formula')
+# dell=","
 
 
-write_flag=0
-with open('../csvFiles/duplicates.csv', 'w') as f:
-	f.write('duplicate_id,'+dell.join(table_labels)+'\n')
-	ind=1
-	for t in tup_duplicates:
-		f.write(str(ind)+','+dell.join(map(str,line_array[t[0]]))+'\n')
-		f.write(str(ind)+','+dell.join(map(str,line_array[t[1]]))+'\n')
-		ind+=1
+# write_flag=0
+# with open('../csvFiles/duplicates1.csv', 'w') as f:
+# 	f.write('duplicate_id,'+dell.join(table_labels)+'\n')
+# 	ind=1
+# 	for t in tup_duplicates:
+# 		f.write(str(ind)+','+dell.join(map(str,line_array[t[0]]))+'\n')
+# 		f.write(str(ind)+','+dell.join(map(str,line_array[t[1]]))+'\n')
+# 		ind+=1
 
