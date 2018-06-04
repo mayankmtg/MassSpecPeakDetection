@@ -35,4 +35,7 @@ for i in range(len(line_array)):
 		first_corr=pearsonr(v1,v2)[0]
 		if(first_corr>=corrthresh and abs(line_array[i][3]-line_array[j][3])<=mzdiff and abs(line_array[i][4]-line_array[j][4])<=rtdiff):
 			count+=1
+print("Number of duplicates: "),
 print(count)
+print("Percentage duplicates: "),
+print(float(count)/float(len(line_array)))
