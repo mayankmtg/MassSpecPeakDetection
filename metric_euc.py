@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.spatial.distance as eucd
 from scipy.stats.stats import pearsonr
+import sys
 
 line_array=[]
 vec_array=[]
@@ -12,7 +13,12 @@ print("Median MZ Diff: "+ str(mzdiff))
 print("Median RT Diff: "+ str(rtdiff))
 print("Correlation Threshold: "+ str(corrthresh))
 table_labels=0
-with open('../csvFiles/test1.csv') as f:
+
+if(len(sys.argv)<3):
+	print("python metric_euc.py csv_file.csv duplicate_file.csv")
+	sys.exit(1)
+
+with open(sys.argv[1]) as f:
 	first=0
 	for line in f:
 		line=line.rstrip('\n')
@@ -67,7 +73,7 @@ dell=","
 
 
 write_flag=0
-with open('../csvFiles/duplicates1.csv', 'w') as f:
+with open(sys.argv[2], 'w') as f:
 	f.write('duplicate_id,'+dell.join(table_labels)+'\n')
 	ind=1
 	for t in tup_duplicates:
