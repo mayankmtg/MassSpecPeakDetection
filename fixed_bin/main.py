@@ -24,7 +24,7 @@ for s in xml_scans:
 mz_in_rt=[]
 for s in scan_arr:
 	for p in s.peaks:
-		newTup=(p[0], p[1], s.retentionTime)
+		newTup=[p[0], p[1], s.retentionTime]
 		mz_in_rt.append(newTup)
 # TODO: Check for the order of intensity and mz
 mz_in_rt=sorted(mz_in_rt, key=lambda x:x[0])
@@ -86,16 +86,26 @@ for sl in slice_array:
 		sl.smooth_in(yhat[bin_in], bin_in)
 		bin_in+=1
 
-	# plt.plot(x,y, 'r--')
-	# plt.plot(x,yhat,'r--', color='blue')
-	# plt.show()
+	plt.plot(x,y, 'r--')
+	plt.plot(x,yhat,'r--', color='blue')
+	plt.show()
 
 for sl in slice_array:
 	x=[]
 	y=[]
 	for t in sl.getBin():
-		x.append(t[2])
+		x.append(float(t[2].lstrip('PT').rstrip('S')))
 		y.append(t[1])
+
+	indices=find_peaks_cwt(y, np.arange(1,10))
+	for i in indices:
+		plt.axvline(x=x[i], color='blue')
+	indices=find_peaks_cwt(y, np.arange(1,100))
+	for i in indices:
+		plt.axvline(x=x[i], color='green')
+	indices=find_peaks_cwt(y, np.arange(1,200))
+	for i in indices:
+		plt.axvline(x=x[i], color='red')
 	plt.plot(x,y, 'r--')
 	plt.show()
 
