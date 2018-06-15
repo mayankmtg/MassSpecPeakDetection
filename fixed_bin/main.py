@@ -10,6 +10,12 @@ file_obj=mzx('../samples/file1.mzXML')
 xml_scans=file_obj.getScans()
 scan_arr=[]
 
+
+def validSlice(sl):
+	if(len(sl.getBin())<50):
+		return False
+	return True
+
 # scan arr contains all the scans of the class scan python
 for s in xml_scans:
 	scan_obj=scan(s)
@@ -47,7 +53,7 @@ maxin=max(mz_in_rt, key=lambda x:x[1])
 minrt=min(mz_in_rt, key=lambda x:x[2])
 maxrt=max(mz_in_rt, key=lambda x:x[2])
 
-looper=np.arange(minmz[0], maxmz[0], 0.1)
+looper=np.arange(minmz[0], maxmz[0], 0.2)
 slice_array=[]
 ind=0
 for l in range(1, len(looper)):
@@ -62,50 +68,51 @@ for l in range(1, len(looper)):
 			new_slice.sortBin()
 			break
 	slice_array.append(new_slice)
-	break
+	# break
 
 slice_smooth=[]
+slice_array=[sl for sl in slice_array if validSlice(sl)]
 for sl in slice_array:
-	x=[]
-	y=[]
-	for t in sl.getBin():
-		x.append(t[2])
-		y.append(t[1])
-	smoothing_win=len(x)/5
+	# x=[]
+	# y=[]
+	# for t in sl.getBin():
+	# 	x.append(t[2])
+	# 	y.append(t[1])
+	curr_bin=sl.getBin();
+	smoothing_win=len(curr_bin)/5
+	if(smoothing_win<3):
+		continue
 	if(smoothing_win%2==0):
 		smoothing_win+=1
-	print(len(x))
-	print(len(y))
-	print(smoothing_win)
-	poly_order=3
-	if(smoothing_win<=poly_order):
-		poly_order=smoothing_win-1
-	yhat=savgol_filter(y,smoothing_win,poly_order)
+	# print(len(x))
+	# print(len(y))
+	# print(smoothing_win)
+	yhat=savgol_filter(curr_bin[:,1],smoothing_win,2)
 	bin_in=0
 	for t in sl.getBin():
 		sl.smooth_in(yhat[bin_in], bin_in)
 		bin_in+=1
 
-	plt.plot(x,y, 'r--')
-	plt.plot(x,yhat,'r--', color='blue')
-	plt.show()
+	# plt.plot(x,y, 'r--')
+	# plt.plot(x,yhat,'r--', color='blue')
+	# plt.show()
 
 for sl in slice_array:
 	x=[]
 	y=[]
 	for t in sl.getBin():
 		x.append(float(t[2].lstrip('PT').rstrip('S')))
-		y.append(t[1])
+		y.append(float(t[1]))
 
+	# indices=find_peaks_cwt(y, np.arange(1,10))
+	# for i in indices:
+	# 	plt.axvline(x=x[i], color='blue')
 	indices=find_peaks_cwt(y, np.arange(1,10))
 	for i in indices:
-		plt.axvline(x=x[i], color='blue')
-	indices=find_peaks_cwt(y, np.arange(1,100))
-	for i in indices:
 		plt.axvline(x=x[i], color='green')
-	indices=find_peaks_cwt(y, np.arange(1,200))
-	for i in indices:
-		plt.axvline(x=x[i], color='red')
+	# indices=find_peaks_cwt(y, np.arange(1,200))
+	# for i in indices:
+	# 	plt.axvline(x=x[i], color='red')
 	plt.plot(x,y, 'r--')
 	plt.show()
 
