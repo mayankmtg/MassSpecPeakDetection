@@ -3,12 +3,27 @@ from scan import scan
 from mzslice import mzslice
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy import sparse
+# from scipy.sparse.linalg import spsolve
 from scipy.signal import savgol_filter
+# from peakdetect import peakdetect
 from scipy.signal import find_peaks_cwt
 
 file_obj=mzx('../samples/file1.mzXML')
 xml_scans=file_obj.getScans()
 scan_arr=[]
+
+def baselineShift(y, lam, p, niter=10):
+	L=len(y)
+	D=sparse.csc_matrix(np.diff(np.eye(L),2))
+	w=np.ones(L)
+	for i in xrange(niter):
+		W=sparse.spdiags(w,0,L,L)
+		Z=W+lam*D.dot(D.transpose())
+		z=sparse.linalg.spsolve(Z,w*y)
+		w=p*(y>z)+(1-p)*(y<z)
+	return z
+
 
 
 def validSlice(sl):
@@ -88,6 +103,7 @@ for sl in slice_array:
 	# print(len(y))
 	# print(smoothing_win)
 	yhat=savgol_filter(curr_bin[:,1],smoothing_win,2)
+	sl.setSmoothWin(smoothing_win)
 	bin_in=0
 	for t in sl.getBin():
 		sl.smooth_in(yhat[bin_in], bin_in)
@@ -96,7 +112,7 @@ for sl in slice_array:
 	# plt.plot(x,y, 'r--')
 	# plt.plot(x,yhat,'r--', color='blue')
 	# plt.show()
-
+print("Baseline Correction")
 for sl in slice_array:
 	x=[]
 	y=[]
@@ -104,15 +120,17 @@ for sl in slice_array:
 		x.append(float(t[2].lstrip('PT').rstrip('S')))
 		y.append(float(t[1]))
 
+	z=baselineShift(y,1000,0.01,sl.smooth_win)
 	# indices=find_peaks_cwt(y, np.arange(1,10))
 	# for i in indices:
 	# 	plt.axvline(x=x[i], color='blue')
-	indices=find_peaks_cwt(y, np.arange(1,10))
+	indices=find_peaks_cwt(z, np.arange(1,10))
 	for i in indices:
-		plt.axvline(x=x[i], color='green')
+		plt.axvline(x=x[i], color='orange')
 	# indices=find_peaks_cwt(y, np.arange(1,200))
 	# for i in indices:
 	# 	plt.axvline(x=x[i], color='red')
 	plt.plot(x,y, 'r--')
+	plt.plot(x,z,'r--', color='green')
 	plt.show()
 

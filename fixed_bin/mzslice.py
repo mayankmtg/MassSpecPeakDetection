@@ -5,6 +5,7 @@ class mzslice():
 		self.mz_max=mz_max
 		self.bin=[]
 		self.bin_np=[]
+		self.smooth_win=0
 	
 	def insert(self, tup):
 		self.bin.append(tup)
@@ -17,4 +18,6 @@ class mzslice():
 		self.bin=sorted(self.bin, key=lambda x:x[2])
 	def smooth_in(self,intensity,bin_in):
 		self.bin[bin_in][1]=intensity
+	def setSmoothWin(self,window_size):
+		self.smooth_win=window_size
 		
