@@ -20,6 +20,8 @@ def baselineShift(y, lam, p, niter=10):
 	for i in xrange(niter):
 		W=sparse.spdiags(w,0,L,L)
 		Z=W+lam*D.dot(D.transpose())
+		mxmx=np.array(w*y)
+		print(Z.shape, mxmx.shape)
 		z=sparse.linalg.spsolve(Z,w*y)
 		w=p*(y>z)+(1-p)*(y<z)
 	return z
@@ -102,7 +104,8 @@ for sl in slice_array:
 	# print(len(x))
 	# print(len(y))
 	# print(smoothing_win)
-	yhat=savgol_filter(curr_bin[:,1],smoothing_win,2)
+	# yhat=savgol_filter(curr_bin[:,1],smoothing_win,2)
+	yhat=curr_bin[:,1]
 	sl.setSmoothWin(smoothing_win)
 	bin_in=0
 	for t in sl.getBin():
@@ -125,6 +128,7 @@ for sl in slice_array:
 	# for i in indices:
 	# 	plt.axvline(x=x[i], color='blue')
 	indices=find_peaks_cwt(z, np.arange(1,10))
+	# indices=peakdetect(y,lookahead=10)
 	for i in indices:
 		plt.axvline(x=x[i], color='orange')
 	# indices=find_peaks_cwt(y, np.arange(1,200))
