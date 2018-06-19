@@ -6,6 +6,10 @@ struct sparseRepresent{
     int j;
     int data;
 };
+struct myPair{
+    int i;
+    int j;
+};
 
 void discreteMatrixDifference(float** a,int row, int column, int n){
     if(n==0){
@@ -57,6 +61,47 @@ vector<sparseRepresent> sparseRepresentation(float** a,int row, int col){
     return sparseMatrix;
 }
 
+vector<sparseRepresent> matrixTranspose(vector<sparseRepresent> mat1){
+    vector<sparseRepresent> D=mat1;
+    vector<sparseRepresent> Dt;
+    for(int i=0;i<mat1.size();i++){
+        int temp=D[i].i;
+        D[i].i=D[i].j;
+        D[i].j=temp;
+        Dt.push_back(D[i]);
+    }
+    return Dt;
+}
+map<myPair,int> hashSparseRepresentation(vector<sparseRepresent> mat){
+    map<myPair,int> retMat;
+    map<myPair,int>::iterator itr;
+    for(int i=0;i<mat.size();i++){
+        myPair x;
+        x.i=mat[i].i;
+        x.j=mat[i].j;
+        itr=retMat.find(x);
+        if(itr==retMat.end()){
+            retMat.insert(make_pair(x,mat[i].data));
+        }
+        else{
+            itr->second+=mat[i].data;
+        }
+    }
+    return retMat;
+}
+void printHashSparse(map<myPair,int> hSparse){
+    map<myPair,int>::iterator itr;
+    for(itr=hSparse.begin();itr!=hSparse.end();itr++){
+        cout << itr->first.i<<","<<itr->first.j << " " << itr->second<< endl;
+    }
+}
+
+// vector<sparseRepresent> matrixSquare(vector<sparseRepresent> mat){
+//     vector<sparseRepresent> returnMat;
+//     map<myPair,int> ;
+
+
+// }
 void printSparse(vector<sparseRepresent> sparseMatrix){
     int n=sparseMatrix.size();
     for(int i=0;i<n;i++){
@@ -79,18 +124,21 @@ int main(){
             arr[i][j]=0;
         }
     }
-    printMat(arr,L,L);
+    // printMat(arr,L,L);
     discreteMatrixDifference(arr,L,L,2);
-    printMat(arr,L,L-2);
+    // printMat(arr,L,L-2);
+    
     printSparse(sparseRepresentation(arr,L,L-2));
+    cout << "Transpose";
+    // printSparse(matrixTranspose(sparseRepresentation(arr,L,L-2)));
     float onesArray[L];
     for(int i=0;i<L;i++){
         onesArray[i]=1;
     }
     cout << "zds"<< endl;
-    printSparse(zeroDiagSparse(onesArray, L));
+    // printSparse(zeroDiagSparse(onesArray, L));
 
-
+    printHashSparse(hashSparseRepresentation(sparseRepresentation(arr,L,L-2)));
     return 0;
 }
 
