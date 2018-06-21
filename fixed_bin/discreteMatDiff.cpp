@@ -72,13 +72,12 @@ vector<sparseRepresent> matrixTranspose(vector<sparseRepresent> mat1){
     }
     return Dt;
 }
-map<myPair,int> hashSparseRepresentation(vector<sparseRepresent> mat){
-    map<myPair,int> retMat;
-    map<myPair,int>::iterator itr;
+map<pair<int,int>,int> hashSparseRepresentation(vector<sparseRepresent> mat){
+    map<pair<int,int>,int> retMat;
+    map<pair<int,int>,int>::iterator itr;
+    pair<int,int> x;
     for(int i=0;i<mat.size();i++){
-        myPair x;
-        x.i=mat[i].i;
-        x.j=mat[i].j;
+        x=make_pair(mat[i].i, mat[i].j);
         itr=retMat.find(x);
         if(itr==retMat.end()){
             retMat.insert(make_pair(x,mat[i].data));
@@ -89,16 +88,16 @@ map<myPair,int> hashSparseRepresentation(vector<sparseRepresent> mat){
     }
     return retMat;
 }
-void printHashSparse(map<myPair,int> hSparse){
-    map<myPair,int>::iterator itr;
+void printHashSparse(map<pair<int,int>,int> hSparse){
+    map<pair<int,int>,int>::iterator itr;
     for(itr=hSparse.begin();itr!=hSparse.end();itr++){
-        cout << itr->first.i<<","<<itr->first.j << " " << itr->second<< endl;
+        cout << itr->first.first<<","<<itr->first.second << " " << itr->second<< endl;
     }
 }
 
 // vector<sparseRepresent> matrixSquare(vector<sparseRepresent> mat){
 //     vector<sparseRepresent> returnMat;
-//     map<myPair,int> ;
+//     map<pair<int,int>,int> ;
 
 
 // }
@@ -129,7 +128,7 @@ int main(){
     // printMat(arr,L,L-2);
     
     printSparse(sparseRepresentation(arr,L,L-2));
-    cout << "Transpose";
+    cout << "Transpose"<<endl;
     // printSparse(matrixTranspose(sparseRepresentation(arr,L,L-2)));
     float onesArray[L];
     for(int i=0;i<L;i++){
@@ -141,4 +140,3 @@ int main(){
     printHashSparse(hashSparseRepresentation(sparseRepresentation(arr,L,L-2)));
     return 0;
 }
-
