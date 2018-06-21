@@ -94,8 +94,20 @@ void printHashSparse(map<pair<int,int>,float> hSparse){
         cout << itr->first.first<<","<<itr->first.second << " " << itr->second<< endl;
     }
 }
+vector<sparseRepresent> unHashSparse(map<pair<int,int>,float> hSparse){
+    vector<sparseRepresent> ans;
+    map<pair<int,int>,float>:: iterator itr;
+    sparseRepresent x;
+    for(itr=hSparse.begin();itr!=hSparse.end();itr++){
+        x.i=itr->first.first;
+        x.j=itr->first.second;
+        x.data=itr->second;
+        ans.push_back(x);
+    }
+    return ans;
+}
 // mat2 must be the transpose of mat1
-map<pair<int,int>,float> matrixSquare(vector<sparseRepresent> mat1, vector<sparseRepresent> mat2){
+vector<sparseRepresent> matrixSquare(vector<sparseRepresent> mat1, vector<sparseRepresent> mat2){
     vector<sparseRepresent> returnMat;
     map<pair<int,int>,float> hashMat1=hashSparseRepresentation(mat1);
     cout << "mat1"<< endl;
@@ -121,7 +133,7 @@ map<pair<int,int>,float> matrixSquare(vector<sparseRepresent> mat1, vector<spars
             }
         }
     }
-    return hashRes;
+    return unHashSparse(hashRes);
 }
 void printSparse(vector<sparseRepresent> sparseMatrix){
     int n=sparseMatrix.size();
@@ -206,6 +218,6 @@ int main(){
     }
     vector<sparseRepresent> x=sparseRepresentation(arr,n,m);
     cout << "Product"<< endl;
-    printHashSparse(matrixSquare(x,matrixTranspose(x)));
+    printSparse(matrixSquare(x,matrixTranspose(x)));
     return 0;
 }
