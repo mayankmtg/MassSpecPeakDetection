@@ -108,12 +108,15 @@ void printSparse(vector<sparseRepresent> sparseMatrix){
     }
 }
 
-int main(){
+
+void computeBaseline(float intensities[], float lambda, float p, int smoothingWindow){
+    int L=len(intensities);
+    // np.eye as arr
     float** arr;
-    int L=10;
     arr=new float *[L];
-    for(int i = 0; i <L; i++)
+    for(int i = 0; i <L; i++){
         arr[i] = new float[L];
+    }
     for(int i=0;i<L;i++){
         for(int j=0;j<L;j++){
             if(i==j){
@@ -123,20 +126,49 @@ int main(){
             arr[i][j]=0;
         }
     }
-    // printMat(arr,L,L);
+    // np.diff on arr
     discreteMatrixDifference(arr,L,L,2);
-    // printMat(arr,L,L-2);
-    
-    printSparse(sparseRepresentation(arr,L,L-2));
-    cout << "Transpose"<<endl;
-    // printSparse(matrixTranspose(sparseRepresentation(arr,L,L-2)));
-    float onesArray[L];
-    for(int i=0;i<L;i++){
-        onesArray[i]=1;
+    // sparse.csc_matrix as D
+    vector<sparseRepresent> D=sparseRepresentation(arr,L,L-2);
+    // np.ones as w
+    float w[L];
+    for(int i=0;i<l;i++){
+        w[i]=1.0;
     }
-    cout << "zds"<< endl;
-    // printSparse(zeroDiagSparse(onesArray, L));
 
-    printHashSparse(hashSparseRepresentation(sparseRepresentation(arr,L,L-2)));
+    // W as diagonal matrix spdiags
+    vector<sparseRepresent> W;
+    
+    for(int i=0;i<smoothingWindow;i++){
+        W=zeroDiagSparse(w,L);
+
+
+
+    }
+}
+
+int main(){
+    // float** arr;
+    // int L=10;
+    // arr=new float *[L];
+    // for(int i = 0; i <L; i++)
+    //     arr[i] = new float[L];
+    // for(int i=0;i<L;i++){
+    //     for(int j=0;j<L;j++){
+    //         if(i==j){
+    //             arr[i][j]=1;
+    //             continue;
+    //         }
+    //         arr[i][j]=0;
+    //     }
+    // }
+    // // printMat(arr,L,L);
+    // discreteMatrixDifference(arr,L,L,2);
+    // // printMat(arr,L,L-2);
+    // vector<sparseRepresent> D=sparseRepresentation(arr, L,L-2);
+    // float w[L];
+    // for(int i=0;i<L;i++){
+    //     w[i]=1;
+    // }
     return 0;
 }
