@@ -4,7 +4,7 @@ using namespace std;
 struct sparseRepresent{
     int i;
     int j;
-    int data;
+    float data;
 };
 struct myPair{
     int i;
@@ -72,9 +72,9 @@ vector<sparseRepresent> matrixTranspose(vector<sparseRepresent> mat1){
     }
     return Dt;
 }
-map<pair<int,int>,int> hashSparseRepresentation(vector<sparseRepresent> mat){
-    map<pair<int,int>,int> retMat;
-    map<pair<int,int>,int>::iterator itr;
+map<pair<int,int>,float> hashSparseRepresentation(vector<sparseRepresent> mat){
+    map<pair<int,int>,float> retMat;
+    map<pair<int,int>,float>::iterator itr;
     pair<int,int> x;
     for(int i=0;i<mat.size();i++){
         x=make_pair(mat[i].i, mat[i].j);
@@ -88,19 +88,41 @@ map<pair<int,int>,int> hashSparseRepresentation(vector<sparseRepresent> mat){
     }
     return retMat;
 }
-void printHashSparse(map<pair<int,int>,int> hSparse){
-    map<pair<int,int>,int>::iterator itr;
+void printHashSparse(map<pair<int,int>,float> hSparse){
+    map<pair<int,int>,float>::iterator itr;
     for(itr=hSparse.begin();itr!=hSparse.end();itr++){
         cout << itr->first.first<<","<<itr->first.second << " " << itr->second<< endl;
     }
 }
-
-// vector<sparseRepresent> matrixSquare(vector<sparseRepresent> mat){
-//     vector<sparseRepresent> returnMat;
-//     map<pair<int,int>,int> ;
-
-
-// }
+// mat2 must be the transpose of mat1
+map<pair<int,int>,float> matrixSquare(vector<sparseRepresent> mat1, vector<sparseRepresent> mat2){
+    vector<sparseRepresent> returnMat;
+    map<pair<int,int>,float> hashMat1=hashSparseRepresentation(mat1);
+    cout << "mat1"<< endl;
+    printHashSparse(hashMat1);
+    map<pair<int,int>,float> hashMat2=hashSparseRepresentation(mat2);
+    cout << "mat2"<< endl;
+    printHashSparse(hashMat2);
+    cout << "Prod"<< endl;
+    map<pair<int,int>,float> hashRes;
+    pair<int,int> x;
+    map<pair<int,int>,float>::iterator itr1,itr2,itr;
+    for(itr1=hashMat1.begin();itr1!=hashMat1.end();itr1++){
+        for(itr2=hashMat2.begin();itr2!=hashMat2.end();itr2++){
+            if(itr1->first.second==itr2->first.first){
+                x=make_pair(itr1->first.first, itr2->first.second);
+                itr=hashRes.find(x);
+                if(itr==hashRes.end()){
+                    hashRes.insert(make_pair(x,(float)itr1->second*itr2->second));
+                }
+                else{
+                    itr->second+=(float)itr1->second*itr2->second;
+                }
+            }
+        }
+    }
+    return hashRes;
+}
 void printSparse(vector<sparseRepresent> sparseMatrix){
     int n=sparseMatrix.size();
     for(int i=0;i<n;i++){
@@ -109,8 +131,8 @@ void printSparse(vector<sparseRepresent> sparseMatrix){
 }
 
 
-void computeBaseline(float intensities[], float lambda, float p, int smoothingWindow){
-    int L=len(intensities);
+void computeBaseline(float intensities[],int L, float lambda, float p, int smoothingWindow){
+    // int L=len(intensities);
     // np.eye as arr
     float** arr;
     arr=new float *[L];
@@ -132,13 +154,13 @@ void computeBaseline(float intensities[], float lambda, float p, int smoothingWi
     vector<sparseRepresent> D=sparseRepresentation(arr,L,L-2);
     // np.ones as w
     float w[L];
-    for(int i=0;i<l;i++){
+    for(int i=0;i<L;i++){
         w[i]=1.0;
     }
 
     // W as diagonal matrix spdiags
     vector<sparseRepresent> W;
-    
+
     for(int i=0;i<smoothingWindow;i++){
         W=zeroDiagSparse(w,L);
 
@@ -170,5 +192,20 @@ int main(){
     // for(int i=0;i<L;i++){
     //     w[i]=1;
     // }
+    int n,m;
+    cin >> n>>m;
+    // float arr[n][m];
+    float** arr;
+    arr=new float *[n];
+    for(int i = 0; i <n; i++)
+        arr[i] = new float[m];
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            cin >> arr[i][j];
+        }
+    }
+    vector<sparseRepresent> x=sparseRepresentation(arr,n,m);
+    cout << "Product"<< endl;
+    printHashSparse(matrixSquare(x,matrixTranspose(x)));
     return 0;
 }
